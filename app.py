@@ -27,7 +27,7 @@ st.markdown(
     <style>
     .stApp {
         background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
-                         url("https://raw.githubusercontent.com/jazima2004/Crop-Rotation-Planner/main/agri1.jpg");
+                         url("https://raw.githubusercontent.com/jazima2004/Crop-Rotation-Planner/main/agri2.jpg");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
