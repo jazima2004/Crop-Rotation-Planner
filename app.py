@@ -13,7 +13,6 @@ load_dotenv()
 # Setup
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
 WEATHER_URL = "http://api.openweathermap.org/data/2.5/weather"
-GEOCODING_URL = "http://api.openweathermap.org/geo/1.0/direct"
 HISTORY_CSV = "crop_history.csv"
 FEEDBACK_CSV = "feedback.csv"
 
@@ -91,15 +90,18 @@ ROTATION_RULES = {
     }
 }
 
+@st.cache_data
 def get_climate(city="Delhi"):
     try:
         response = requests.get(WEATHER_URL, params={"q": city, "appid": API_KEY, "units": "metric"})
         response.raise_for_status()
         data = response.json()
         humidity = data["main"]["humidity"]
-        return "humid" if humidity > 50 else "dry", data["coord"]["lat"], data["coord"]["lon"], humidity
+        lat = data["coord"]["lat"]
+        lon = data["coord"]["lon"]
+        return "humid" if humidity > 50 else "dry", lat, lon, humidity, data["main"]["temp"]
     except:
-        return "humid", None, None, None  # Fallback
+        return "humid", 28.6139, 77.2090, None, None  # Fallback to Delhi coordinates
 
 def add_crop(crop, location, soil_type, season):
     date = datetime.now().strftime("%Y-%m-%d")
@@ -114,7 +116,7 @@ def suggest_rotation(crop, location, soil_type, season):
     df = pd.read_csv(HISTORY_CSV)
     feedback_df = pd.read_csv(FEEDBACK_CSV)
     past_crops = df[df["location"] == location]["crop"].tolist()
-    climate, _, _, _ = get_climate(location)
+    climate, _, _, _, _ = get_climate(location)
 
     if crop not in ROTATION_RULES:
         return "Crop not supported. Try Wheat, Rice, Maize, Legumes, or Millets."
@@ -148,6 +150,12 @@ def plot_history(df):
         st.dataframe(df)
         st.line_chart(df["crop"].value_counts())
 
+# Initialize session state
+if "map_data" not in st.session_state:
+    st.session_state.map_data = {"city": "Delhi", "climate": "humid", "lat": 28.6139, "lon": 77.2090, "suggestions": None}
+if "suggestions" not in st.session_state:
+    st.session_state.suggestions = None
+
 # UI
 st.title("🌾 Farmer's Crop Rotation Planner")
 st.write("Plan sustainable crop rotations with real-time climate data!")
@@ -167,32 +175,32 @@ with st.form("crop_form"):
 # Get suggestions
 st.header("2️⃣ Get Rotation Suggestions")
 if st.button("Suggest Rotation"):
-    result = suggest_rotation(crop, location, soil, season)
-    climate, lat, lon, _ = get_climate(location)
-    if isinstance(result, str):
-        st.warning(result)
+    st.session_state.suggestions = suggest_rotation(crop, location, soil, season)
+    climate, lat, lon, _, _ = get_climate(location)
+    st.session_state.map_data = {"city": location, "climate": climate, "lat": lat, "lon": lon, "suggestions": st.session_state.suggestions}
+    if isinstance(st.session_state.suggestions, str):
+        st.warning(st.session_state.suggestions)
     else:
-        st.success(f"Suggested crops after {crop}: {', '.join(result)}")
-        plot_suggestions(result)
-        map_obj = create_map(location, climate, lat, lon, result)
-        if map_obj:
-            st_folium(map_obj, width=700, height=400)
+        st.success(f"Suggested crops after {crop}: {', '.join(st.session_state.suggestions)}")
+        plot_suggestions(st.session_state.suggestions)
 
-        feedback = st.radio("Was the suggestion useful?", ["Yes", "No"])
-        feedback_notes = st.text_area("Feedback Notes", placeholder="e.g., Legumes worked well")
-        if st.button("Submit Feedback"):
-            rating = 1 if feedback == "Yes" else 0
-            add_feedback(crop, result[0], rating, feedback_notes)
-            st.info(f"Feedback recorded: {result[0]} rated as {feedback}")
+# Feedback
+st.header("3️⃣ Submit Feedback")
+if st.session_state.suggestions and isinstance(st.session_state.suggestions, list):
+    feedback = st.radio("Was the suggestion useful?", ["Yes", "No"])
+    feedback_notes = st.text_area("Feedback Notes", placeholder="e.g., Legumes worked well")
+    if st.button("Submit Feedback"):
+        rating = 1 if feedback == "Yes" else 0
+        add_feedback(crop, st.session_state.suggestions[0], rating, feedback_notes)
+        st.info(f"Feedback recorded: {st.session_state.suggestions[0]} rated as {feedback}")
 
 # Export plan
-st.header("3️⃣ Export Rotation Plan")
+st.header("4️⃣ Export Rotation Plan")
 if st.button("Export Plan"):
-    result = suggest_rotation(crop, location, soil, season)
-    if isinstance(result, list):
+    if st.session_state.suggestions and isinstance(st.session_state.suggestions, list):
         plan = pd.DataFrame({
             "Current Crop": [crop],
-            "Suggested Rotations": [", ".join(result)],
+            "Suggested Rotations": [", ".join(st.session_state.suggestions)],
             "Date": [datetime.now().strftime("%Y-%m-%d")]
         })
         plan.to_csv("rotation_plan.csv", index=False)
@@ -203,39 +211,44 @@ if st.button("Export Plan"):
         st.warning("No suggestions to export.")
 
 # View history
-st.header("4️⃣ View Crop History")
+st.header("5️⃣ View Crop History")
 if st.button("Show History"):
     df = pd.read_csv(HISTORY_CSV)
+    climate, lat, lon, _, _ = get_climate(location)
+    st.session_state.map_data = {"city": location, "climate": climate, "lat": lat, "lon": lon, "suggestions": None}
     plot_history(df)
-    map_obj = create_map(location, climate, lat, lon)
-    if map_obj:
-        st_folium(map_obj, width=700, height=400)
 
 # Reset history
-st.header("5️⃣ Reset Crop History")
+st.header("6️⃣ Reset Crop History")
 if st.button("Reset History"):
     pd.DataFrame(columns=["date", "crop", "location", "soil_type", "season"]).to_csv(HISTORY_CSV, index=False)
     st.success("Crop history reset.")
 
 # Real-time climate info
-st.header("6️⃣ 🌤️ Real-time Climate Info")
+st.header("7️⃣ 🌤️ Real-time Climate Info")
 city = st.text_input("Enter your city for live climate data", value="Delhi")
 if st.button("Check Climate"):
-    try:
-        response = requests.get(WEATHER_URL, params={"q": city, "appid": API_KEY, "units": "metric"})
-        response.raise_for_status()
-        data = response.json()
-        humidity = data["main"]["humidity"]
-        temperature = data["main"]["temp"]
-        climate = "humid" if humidity > 50 else "dry"
-        lat, lon = data["coord"]["lat"], data["coord"]["lon"]
-
+    climate, lat, lon, humidity, temp = get_climate(city)
+    st.session_state.map_data = {"city": city, "climate": climate, "lat": lat, "lon": lon, "suggestions": None}
+    if humidity is not None:
         st.success(f"✅ City: {city}")
-        st.write(f"🌡️ Temperature: {temperature}°C")
+        st.write(f"🌡️ Temperature: {temp}°C")
         st.write(f"💧 Humidity: {humidity}%")
         st.write(f"🌱 Climate Category: **{climate.upper()}** (used for crop suggestion)")
-        map_obj = create_map(city, climate, lat, lon)
-        if map_obj:
-            st_folium(map_obj, width=700, height=400)
-    except:
-        st.error("Failed to fetch weather data. Check city name or API key.")
+    else:
+        st.error("Failed to fetch weather data. Using default location (Delhi).")
+
+# Display map
+st.header("8️⃣ 📍 Location Map")
+if st.session_state.map_data["lat"] and st.session_state.map_data["lon"]:
+    map_obj = create_map(
+        st.session_state.map_data["city"],
+        st.session_state.map_data["climate"],
+        st.session_state.map_data["lat"],
+        st.session_state.map_data["lon"],
+        st.session_state.map_data["suggestions"]
+    )
+    if map_obj:
+        st_folium(map_obj, width=700, height=400, key="map", returned_objects=[])
+else:
+    st.warning("No location data available for map.")
