@@ -1,5 +1,6 @@
 streamlit
 pandas
 requests
-matplotlib
 python-dotenv
+folium
+streamlit-folium
