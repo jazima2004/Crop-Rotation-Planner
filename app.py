@@ -26,7 +26,7 @@ st.markdown(
     """
     <style>
     .stApp {
-        background-image: url("https://raw.githubusercontent.com/jazima2004/Crop-Rotation-Planner/main/Premium-Photo-_-Empty-wood-table-top-and-blurred-green-tree.jpg");
+        background-image: url("https://raw.githubusercontent.com/jazima2004/Crop-Rotation-Planner/main/agri2.jpg");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
