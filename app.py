@@ -21,30 +21,16 @@ if not os.path.exists(HISTORY_CSV):
 if not os.path.exists(FEEDBACK_CSV):
     pd.DataFrame(columns=["crop", "suggestion", "rating", "notes"]).to_csv(FEEDBACK_CSV, index=False)
 
-# Farming-themed CSS with fixed background image
+# Farming-themed CSS with background image
 st.markdown(
     """
     <style>
     .stApp {
-        background-image: url("https://i.imgur.com/4Q3X7sB.jpg");
+        background-image: url("https://images.unsplash.com/photo-1500595046743-ee5a85505e7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80");
         background-size: cover;
         background-position: center;
-        background-repeat: no-repeat;
-        background-color: #4CAF50 !important; /* Fallback color */
-    }
-    .stApp::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.3); /* Semi-transparent overlay */
-        z-index: 0;
-    }
-    .stApp > * {
-        position: relative;
-        z-index: 1;
+        background-attachment: fixed;
+        opacity: 0.95;
     }
     .stSidebar {
         background-color: rgba(255, 255, 255, 0.9);
@@ -58,7 +44,6 @@ st.markdown(
         padding: 10px;
         width: 100%;
         margin-bottom: 5px;
-        font-weight: bold;
     }
     .stButton>button:hover {
         background-color: #45a049;
@@ -66,11 +51,6 @@ st.markdown(
     h1, h2 {
         color: #2E7D32;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-    }
-    .stTextInput, .stSelectbox, .stRadio, .stTextArea {
-        background-color: rgba(255, 255, 255, 0.9);
-        border-radius: 5px;
-        padding: 5px;
     }
     </style>
     """,
@@ -223,21 +203,21 @@ if "page" not in st.session_state:
 
 # Sidebar buttons
 st.sidebar.title("🌾 Crop Rotation Planner")
-if st.sidebar.button("🌱 Add Crop"):
+if st.sidebar.button("Add Crop"):
     st.session_state.page = "Add Crop"
-if st.sidebar.button("🌾 Get Rotation Suggestions"):
+if st.sidebar.button("Get Rotation Suggestions"):
     st.session_state.page = "Get Rotation Suggestions"
-if st.sidebar.button("📝 Submit Feedback"):
+if st.sidebar.button("Submit Feedback"):
     st.session_state.page = "Submit Feedback"
-if st.sidebar.button("📥 Export Rotation Plan"):
+if st.sidebar.button("Export Rotation Plan"):
     st.session_state.page = "Export Rotation Plan"
-if st.sidebar.button("📜 View Crop History"):
+if st.sidebar.button("View Crop History"):
     st.session_state.page = "View Crop History"
-if st.sidebar.button("🔄 Reset Crop History"):
+if st.sidebar.button("Reset Crop History"):
     st.session_state.page = "Reset Crop History"
-if st.sidebar.button("🌤️ Real-time Climate Info"):
+if st.sidebar.button("Real-time Climate Info"):
     st.session_state.page = "Real-time Climate Info"
-if st.sidebar.button("🗺️ Location Map"):
+if st.sidebar.button("Location Map"):
     st.session_state.page = "Location Map"
 
 # Main content based on selected page
