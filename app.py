@@ -21,7 +21,7 @@ if not os.path.exists(HISTORY_CSV):
 if not os.path.exists(FEEDBACK_CSV):
     pd.DataFrame(columns=["crop", "suggestion", "rating", "notes"]).to_csv(FEEDBACK_CSV, index=False)
 
-# Farming-themed CSS with white text for input fields
+# Farming-themed CSS with white text for specified elements
 st.markdown(
     """
     <style>
@@ -63,48 +63,25 @@ st.markdown(
     .stButton>button:hover {
         background-color: #45a049;
     }
-    h1, h2 {
-        color: #2E7D32;
+    /* Titles and headers */
+    h1, h2, .stMarkdown h1, .stMarkdown h2 {
+        color: #FFFFFF !important;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     }
-    /* Style text input fields (Location, City) */
-    .stTextInput input {
+    /* Subtext and general text */
+    .stMarkdown p, .stMarkdown div {
+        color: #FFFFFF !important;
+    }
+    /* Input labels */
+    .stSelectbox label, .stTextInput label, .stTextArea label, .stRadio label {
+        color: #FFFFFF !important;
+    }
+    /* Messages (success, info, warning, error) */
+    .stSuccess, .stInfo, .stWarning, .stError {
         color: #FFFFFF !important;
         background-color: rgba(0, 0, 0, 0.7) !important;
-        border: 2px solid #4CAF50 !important;
         border-radius: 5px;
-        padding: 5px;
-    }
-    .stTextInput input::placeholder {
-        color: #D0D0D0 !important;
-        opacity: 0.7;
-    }
-    /* Style selectbox fields (Crop, Soil Type, Season) */
-    .stSelectbox select {
-        color: #FFFFFF !important;
-        background-color: rgba(0, 0, 0, 0.7) !important;
-        border: 2px solid #4CAF50 !important;
-        border-radius: 5px;
-        padding: 5px;
-    }
-    /* Style text area (Feedback Notes) */
-    .stTextArea textarea {
-        color: #FFFFFF !important;
-        background-color: rgba(0, 0, 0, 0.7) !important;
-        border: 2px solid #4CAF50 !important;
-        border-radius: 5px;
-        padding: 5px;
-    }
-    .stTextArea textarea::placeholder {
-        color: #D0D0D0 !important;
-        opacity: 0.7;
-    }
-    /* Style radio buttons (Feedback rating) */
-    .stRadio label {
-        color: #FFFFFF !important;
-        background-color: rgba(0, 0, 0, 0.7);
-        border-radius: 5px;
-        padding: 5px;
+        padding: 10px;
     }
     </style>
     """,
