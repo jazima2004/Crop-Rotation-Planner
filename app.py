@@ -26,7 +26,7 @@ st.markdown(
     """
     <style>
     .stApp {
-        background-image: url("https://images.unsplash.com/photo-1500595046743-ee5a85505e7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80");
+        background-image: url("https://github.com/jazima2004/Crop-Rotation-Planner.git/agri1.jpg");
         background-size: cover;
         background-position: center;
         background-attachment: fixed;
