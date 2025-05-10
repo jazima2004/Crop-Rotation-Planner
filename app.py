@@ -21,7 +21,7 @@ if not os.path.exists(HISTORY_CSV):
 if not os.path.exists(FEEDBACK_CSV):
     pd.DataFrame(columns=["crop", "suggestion", "rating", "notes"]).to_csv(FEEDBACK_CSV, index=False)
 
-# Farming-themed CSS with updated dropdown text color to black
+# Farming-themed CSS with updated dropdown text color to black and text input background to light green
 st.markdown(
     """
     <style>
@@ -75,23 +75,23 @@ st.markdown(
     .stSelectbox label *, .stTextInput label *, .stTextArea label *, .stRadio label * {
         color: #FFFFFF !important;
     }
-    /* Text input text (already black) */
+    /* Text input background to light green */
     .stTextInput input {
         color: #000000 !important;
-        background-color: #FFFFFF !important;
+        background-color: #E8F5E9 !important; /* Light green background */
         border: 1px solid #4CAF50 !important;
         border-radius: 5px;
         padding: 5px;
     }
     /* Dropdown (selectbox) text (selected option and options in menu) */
-    .stSelectbox div[data-baseweb="select"] > div {
+    .stSelectbox div[data-baseweb="select"] > div, .stSelectbox div[data-baseweb="select"] > div * {
         color: #000000 !important; /* Ensure selected text is black */
         background-color: #FFFFFF !important;
         border: 1px solid #4CAF50 !important;
         border-radius: 5px;
         padding: 5px;
     }
-    .stSelectbox div[role="listbox"] ul {
+    .stSelectbox div[role="listbox"], .stSelectbox div[role="listbox"] * {
         background-color: #FFFFFF !important;
     }
     .stSelectbox div[role="listbox"] li, .stSelectbox div[role="listbox"] li * {
