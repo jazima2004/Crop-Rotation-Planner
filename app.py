@@ -21,7 +21,43 @@ if not os.path.exists(HISTORY_CSV):
 if not os.path.exists(FEEDBACK_CSV):
     pd.DataFrame(columns=["crop", "suggestion", "rating", "notes"]).to_csv(FEEDBACK_CSV, index=False)
 
-# Expanded rotation rules with seasons
+# Farming-themed CSS with background image
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: url("https://images.unsplash.com/photo-1500595046743-ee5a85505e7b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        opacity: 0.95;
+    }
+    .stSidebar {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-right: 2px solid #4CAF50;
+    }
+    .stButton>button {
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 5px;
+        border: none;
+        padding: 10px;
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    .stButton>button:hover {
+        background-color: #45a049;
+    }
+    h1, h2 {
+        color: #2E7D32;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Rotation rules with seasons
 ROTATION_RULES = {
     "Wheat": {
         "humid": {
@@ -162,28 +198,33 @@ if "map_data" not in st.session_state:
     st.session_state.map_data = {"city": "Delhi", "climate": "humid", "lat": 28.6139, "lon": 77.2090, "suggestions": None}
 if "suggestions" not in st.session_state:
     st.session_state.suggestions = None
+if "page" not in st.session_state:
+    st.session_state.page = "Add Crop"
 
-# Sidebar menu
+# Sidebar buttons
 st.sidebar.title("🌾 Crop Rotation Planner")
-menu = st.sidebar.selectbox(
-    "Select a Feature",
-    [
-        "Add Crop",
-        "Get Rotation Suggestions",
-        "Submit Feedback",
-        "Export Rotation Plan",
-        "View Crop History",
-        "Reset Crop History",
-        "Real-time Climate Info",
-        "Location Map"
-    ]
-)
+if st.sidebar.button("Add Crop"):
+    st.session_state.page = "Add Crop"
+if st.sidebar.button("Get Rotation Suggestions"):
+    st.session_state.page = "Get Rotation Suggestions"
+if st.sidebar.button("Submit Feedback"):
+    st.session_state.page = "Submit Feedback"
+if st.sidebar.button("Export Rotation Plan"):
+    st.session_state.page = "Export Rotation Plan"
+if st.sidebar.button("View Crop History"):
+    st.session_state.page = "View Crop History"
+if st.sidebar.button("Reset Crop History"):
+    st.session_state.page = "Reset Crop History"
+if st.sidebar.button("Real-time Climate Info"):
+    st.session_state.page = "Real-time Climate Info"
+if st.sidebar.button("Location Map"):
+    st.session_state.page = "Location Map"
 
-# Main content based on menu selection
+# Main content based on selected page
 st.title("Farmer's Crop Rotation Planner")
 st.write("Plan sustainable crop rotations with real-time climate data!")
 
-# Shared inputs (displayed in relevant sections)
+# Shared inputs
 def render_inputs():
     with st.form("crop_form"):
         st.session_state.inputs["crop"] = st.selectbox("Current Crop", ["Wheat", "Rice", "Maize", "Legumes", "Millets"], key="crop")
@@ -192,8 +233,8 @@ def render_inputs():
         st.session_state.inputs["season"] = st.selectbox("Season", ["Monsoon", "Winter", "Summer"], key="season")
         return st.form_submit_button("Submit")
 
-# Menu sections
-if menu == "Add Crop":
+# Page content
+if st.session_state.page == "Add Crop":
     st.header("Add Current Crop")
     if render_inputs():
         add_crop(
@@ -204,7 +245,7 @@ if menu == "Add Crop":
         )
         st.success(f"Added {st.session_state.inputs['crop']} for {st.session_state.inputs['location']} ({st.session_state.inputs['soil']} soil, {st.session_state.inputs['season']})")
 
-elif menu == "Get Rotation Suggestions":
+elif st.session_state.page == "Get Rotation Suggestions":
     st.header("Get Rotation Suggestions")
     render_inputs()
     if st.button("Suggest Rotation"):
@@ -239,7 +280,7 @@ elif menu == "Get Rotation Suggestions":
                 if map_obj:
                     st_folium(map_obj, width=700, height=400, key="map", returned_objects=[])
 
-elif menu == "Submit Feedback":
+elif st.session_state.page == "Submit Feedback":
     st.header("Submit Feedback")
     if st.session_state.suggestions and isinstance(st.session_state.suggestions, list):
         feedback = st.radio("Was the suggestion useful?", ["Yes", "No"])
@@ -251,7 +292,7 @@ elif menu == "Submit Feedback":
     else:
         st.warning("No suggestions available. Please get rotation suggestions first.")
 
-elif menu == "Export Rotation Plan":
+elif st.session_state.page == "Export Rotation Plan":
     st.header("Export Rotation Plan")
     if st.button("Export Plan"):
         if st.session_state.suggestions and isinstance(st.session_state.suggestions, list):
@@ -267,7 +308,7 @@ elif menu == "Export Rotation Plan":
         else:
             st.warning("No suggestions to export. Please get rotation suggestions first.")
 
-elif menu == "View Crop History":
+elif st.session_state.page == "View Crop History":
     st.header("View Crop History")
     df = pd.read_csv(HISTORY_CSV)
     climate, lat, lon, _, _ = get_climate(st.session_state.inputs["location"])
@@ -290,13 +331,13 @@ elif menu == "View Crop History":
         if map_obj:
             st_folium(map_obj, width=700, height=400, key="map", returned_objects=[])
 
-elif menu == "Reset Crop History":
+elif st.session_state.page == "Reset Crop History":
     st.header("Reset Crop History")
     if st.button("Reset History"):
         pd.DataFrame(columns=["date", "crop", "location", "soil_type", "season"]).to_csv(HISTORY_CSV, index=False)
         st.success("Crop history reset.")
 
-elif menu == "Real-time Climate Info":
+elif st.session_state.page == "Real-time Climate Info":
     st.header("Real-time Climate Info")
     city = st.text_input("Enter your city for live climate data", value=st.session_state.inputs["location"])
     if st.button("Check Climate"):
@@ -326,7 +367,7 @@ elif menu == "Real-time Climate Info":
         if map_obj:
             st_folium(map_obj, width=700, height=400, key="map", returned_objects=[])
 
-elif menu == "Location Map":
+elif st.session_state.page == "Location Map":
     st.header("Location Map")
     if st.session_state.map_data["lat"] and st.session_state.map_data["lon"]:
         map_obj = create_map(
