@@ -21,7 +21,7 @@ if not os.path.exists(HISTORY_CSV):
 if not os.path.exists(FEEDBACK_CSV):
     pd.DataFrame(columns=["crop", "suggestion", "rating", "notes"]).to_csv(FEEDBACK_CSV, index=False)
 
-# Farming-themed CSS with white text, black input/button/dropdown options, and fixed scrolling
+# Farming-themed CSS with updated dropdown text color to black
 st.markdown(
     """
     <style>
@@ -83,24 +83,23 @@ st.markdown(
         border-radius: 5px;
         padding: 5px;
     }
-    /* Dropdown (selectbox) text (selected option) */
-    .stSelectbox select {
-        color: #000000 !important;
+    /* Dropdown (selectbox) text (selected option and options in menu) */
+    .stSelectbox div[data-baseweb="select"] > div {
+        color: #000000 !important; /* Ensure selected text is black */
         background-color: #FFFFFF !important;
         border: 1px solid #4CAF50 !important;
         border-radius: 5px;
         padding: 5px;
     }
-    /* Dropdown options (more specific selector to ensure black text) */
-    div.stSelectbox select option,
-    [data-baseweb="select"] option {
-        color: #000000 !important;
+    .stSelectbox div[role="listbox"] ul {
         background-color: #FFFFFF !important;
     }
-    /* Add hover effect for dropdown options */
-    div.stSelectbox select option:hover,
-    [data-baseweb="select"] option:hover {
-        background-color: #F0F0F0 !important; /* Light gray on hover */
+    .stSelectbox div[role="listbox"] li, .stSelectbox div[role="listbox"] li * {
+        color: #000000 !important; /* Ensure dropdown options are black */
+        background-color: #FFFFFF !important;
+    }
+    .stSelectbox div[role="listbox"] li:hover {
+        background-color: #E8F5E9 !important; /* Light green on hover for options */
     }
     /* Messages (success, info, warning, error) */
     .stSuccess, .stInfo, .stWarning, .stError,
@@ -110,17 +109,17 @@ st.markdown(
         border-radius: 5px;
         padding: 10px;
     }
-    /* Form submit button text (already black) */
+    /* Form submit button text (set to black) */
     .stFormSubmitButton button {
         color: #000000 !important;
-        background-color: #66BB6A !important;
+        background-color: #66BB6A !important; /* Match regular buttons */
         border-radius: 5px;
         border: none;
         padding: 10px;
         font-weight: bold;
     }
     .stFormSubmitButton button:hover {
-        background-color: #5DAE61 !important;
+        background-color: #5DAE61 !important; /* Match regular buttons */
     }
     </style>
     """,
