@@ -21,38 +21,32 @@ if not os.path.exists(HISTORY_CSV):
 if not os.path.exists(FEEDBACK_CSV):
     pd.DataFrame(columns=["crop", "suggestion", "rating", "notes"]).to_csv(FEEDBACK_CSV, index=False)
 
-# Farming-themed CSS with white text for specified elements
+# Farming-themed CSS with white text and fixed scrolling
 st.markdown(
     """
     <style>
     .stApp {
-        background-image: url("https://raw.githubusercontent.com/jazima2004/Crop-Rotation-Planner/main/agri1.jpg");
+        background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), 
+                         url("https://raw.githubusercontent.com/jazima2004/Crop-Rotation-Planner/main/agri1.jpg");
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-color: #4CAF50 !important; /* Fallback color */
+        overflow-y: auto !important; /* Ensure scrolling is enabled */
+        min-height: 100vh; /* Ensure it takes at least full viewport height */
     }
-    .stApp::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.3); /* Dark overlay for readability */
-        z-index: 0;
+    /* Fallback: Set all text in stApp to white, except specific elements */
+    .stApp * {
+        color: #FFFFFF !important;
     }
-    .stApp > * {
-        position: relative;
-        z-index: 1;
+    /* Override for sidebar to keep its text readable (not white) */
+    .stSidebar, .stSidebar * {
+        color: #000000 !important; /* Black text for sidebar */
     }
-    .stSidebar {
-        background-color: rgba(255, 255, 255, 0.9);
-        border-right: 2px solid #4CAF50;
-    }
+    /* Override for buttons to keep their text white (already set by button style) */
     .stButton>button {
         background-color: #4CAF50;
-        color: white;
+        color: white !important;
         border-radius: 5px;
         border: none;
         padding: 10px;
@@ -63,25 +57,35 @@ st.markdown(
     .stButton>button:hover {
         background-color: #45a049;
     }
+    .stSidebar {
+        background-color: rgba(255, 255, 255, 0.9);
+        border-right: 2px solid #4CAF50;
+    }
     /* Titles and headers */
-    h1, h2, .stMarkdown h1, .stMarkdown h2 {
+    h1, h2, .stMarkdown h1, .stMarkdown h2, .stMarkdown h1 *, .stMarkdown h2 * {
         color: #FFFFFF !important;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     }
-    /* Subtext and general text */
-    .stMarkdown p, .stMarkdown div {
+    /* Subtext and general text (e.g., st.write) */
+    .stMarkdown p, .stMarkdown div, .stMarkdown p *, .stMarkdown div * {
         color: #FFFFFF !important;
     }
     /* Input labels */
-    .stSelectbox label, .stTextInput label, .stTextArea label, .stRadio label {
+    .stSelectbox label, .stTextInput label, .stTextArea label, .stRadio label,
+    .stSelectbox label *, .stTextInput label *, .stTextArea label *, .stRadio label * {
         color: #FFFFFF !important;
     }
     /* Messages (success, info, warning, error) */
-    .stSuccess, .stInfo, .stWarning, .stError {
+    .stSuccess, .stInfo, .stWarning, .stError,
+    .stSuccess *, .stInfo *, .stWarning *, .stError * {
         color: #FFFFFF !important;
         background-color: rgba(0, 0, 0, 0.7) !important;
         border-radius: 5px;
         padding: 10px;
+    }
+    /* Ensure form submit button text remains white */
+    .stFormSubmitButton button {
+        color: #FFFFFF !important;
     }
     </style>
     """,
