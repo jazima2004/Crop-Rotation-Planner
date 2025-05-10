@@ -21,7 +21,7 @@ if not os.path.exists(HISTORY_CSV):
 if not os.path.exists(FEEDBACK_CSV):
     pd.DataFrame(columns=["crop", "suggestion", "rating", "notes"]).to_csv(FEEDBACK_CSV, index=False)
 
-# Farming-themed CSS with styled input fields and fixed background
+# Farming-themed CSS with background image
 st.markdown(
     """
     <style>
@@ -29,22 +29,8 @@ st.markdown(
         background-image: url("https://raw.githubusercontent.com/jazima2004/Crop-Rotation-Planner/main/agri1.jpg");
         background-size: cover;
         background-position: center;
-        background-repeat: no-repeat;
-        background-color: #4CAF50 !important; /* Fallback color */
-    }
-    .stApp::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.3); /* Dark overlay for readability */
-        z-index: 0;
-    }
-    .stApp > * {
-        position: relative;
-        z-index: 1;
+        background-attachment: fixed;
+        opacity: 0.95;
     }
     .stSidebar {
         background-color: rgba(255, 255, 255, 0.9);
@@ -58,7 +44,6 @@ st.markdown(
         padding: 10px;
         width: 100%;
         margin-bottom: 5px;
-        font-weight: bold;
     }
     .stButton>button:hover {
         background-color: #45a049;
@@ -66,45 +51,6 @@ st.markdown(
     h1, h2 {
         color: #2E7D32;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
-    }
-    /* Style text input fields (Location, City) */
-    .stTextInput input {
-        color: #F5F5F5 !important;
-        background-color: rgba(0, 0, 0, 0.7) !important;
-        border: 2px solid #4CAF50 !important;
-        border-radius: 5px;
-        padding: 5px;
-    }
-    .stTextInput input::placeholder {
-        color: #E0E0E0 !important;
-        opacity: 0.7;
-    }
-    /* Style selectbox fields (Crop, Soil Type, Season) */
-    .stSelectbox select {
-        color: #F5F5F5 !important;
-        background-color: rgba(0, 0, 0, 0.7) !important;
-        border: 2px solid #4CAF50 !important;
-        border-radius: 5px;
-        padding: 5px;
-    }
-    /* Style text area (Feedback Notes) */
-    .stTextArea textarea {
-        color: #F5F5F5 !important;
-        background-color: rgba(0, 0, 0, 0.7) !important;
-        border: 2px solid #4CAF50 !important;
-        border-radius: 5px;
-        padding: 5px;
-    }
-    .stTextArea textarea::placeholder {
-        color: #E0E0E0 !important;
-        opacity: 0.7;
-    }
-    /* Style radio buttons (Feedback rating) */
-    .stRadio label {
-        color: #F5F5F5 !important;
-        background-color: rgba(0, 0, 0, 0.7);
-        border-radius: 5px;
-        padding: 5px;
     }
     </style>
     """,
