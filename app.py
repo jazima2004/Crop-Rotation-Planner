@@ -21,7 +21,7 @@ if not os.path.exists(HISTORY_CSV):
 if not os.path.exists(FEEDBACK_CSV):
     pd.DataFrame(columns=["crop", "suggestion", "rating", "notes"]).to_csv(FEEDBACK_CSV, index=False)
 
-# Farming-themed CSS with white text and fixed scrolling
+# Farming-themed CSS with white text, black input text, and fixed scrolling
 st.markdown(
     """
     <style>
@@ -74,6 +74,14 @@ st.markdown(
     .stSelectbox label, .stTextInput label, .stTextArea label, .stRadio label,
     .stSelectbox label *, .stTextInput label *, .stTextArea label *, .stRadio label * {
         color: #FFFFFF !important;
+    }
+    /* Input text (set to black for readability) */
+    .stTextInput input {
+        color: #000000 !important;
+        background-color: #FFFFFF !important; /* White background for contrast */
+        border: 1px solid #4CAF50 !important; /* Green border for theme consistency */
+        border-radius: 5px;
+        padding: 5px;
     }
     /* Messages (success, info, warning, error) */
     .stSuccess, .stInfo, .stWarning, .stError,
