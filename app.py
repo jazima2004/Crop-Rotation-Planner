@@ -21,7 +21,7 @@ if not os.path.exists(HISTORY_CSV):
 if not os.path.exists(FEEDBACK_CSV):
     pd.DataFrame(columns=["crop", "suggestion", "rating", "notes"]).to_csv(FEEDBACK_CSV, index=False)
 
-# Farming-themed CSS with white text, black input text, and fixed scrolling
+# Farming-themed CSS with white text, black input/button text, and fixed scrolling
 st.markdown(
     """
     <style>
@@ -43,10 +43,10 @@ st.markdown(
     .stSidebar, .stSidebar * {
         color: #000000 !important; /* Black text for sidebar */
     }
-    /* Override for buttons to keep their text white (already set by button style) */
+    /* Override for buttons to have black text */
     .stButton>button {
-        background-color: #4CAF50;
-        color: white !important;
+        background-color: #66BB6A; /* Lighter green for contrast with black text */
+        color: #000000 !important;
         border-radius: 5px;
         border: none;
         padding: 10px;
@@ -55,7 +55,7 @@ st.markdown(
         font-weight: bold;
     }
     .stButton>button:hover {
-        background-color: #45a049;
+        background-color: #5DAE61; /* Slightly darker on hover */
     }
     .stSidebar {
         background-color: rgba(255, 255, 255, 0.9);
@@ -75,13 +75,25 @@ st.markdown(
     .stSelectbox label *, .stTextInput label *, .stTextArea label *, .stRadio label * {
         color: #FFFFFF !important;
     }
-    /* Input text (set to black for readability) */
+    /* Text input text (already black) */
     .stTextInput input {
         color: #000000 !important;
-        background-color: #FFFFFF !important; /* White background for contrast */
-        border: 1px solid #4CAF50 !important; /* Green border for theme consistency */
+        background-color: #FFFFFF !important;
+        border: 1px solid #4CAF50 !important;
         border-radius: 5px;
         padding: 5px;
+    }
+    /* Dropdown (selectbox) text (selected option and options in menu) */
+    .stSelectbox select {
+        color: #000000 !important;
+        background-color: #FFFFFF !important;
+        border: 1px solid #4CAF50 !important;
+        border-radius: 5px;
+        padding: 5px;
+    }
+    .stSelectbox select option {
+        color: #000000 !important;
+        background-color: #FFFFFF !important;
     }
     /* Messages (success, info, warning, error) */
     .stSuccess, .stInfo, .stWarning, .stError,
@@ -91,9 +103,17 @@ st.markdown(
         border-radius: 5px;
         padding: 10px;
     }
-    /* Ensure form submit button text remains white */
+    /* Form submit button text (set to black) */
     .stFormSubmitButton button {
-        color: #FFFFFF !important;
+        color: #000000 !important;
+        background-color: #66BB6A !important; /* Match regular buttons */
+        border-radius: 5px;
+        border: none;
+        padding: 10px;
+        font-weight: bold;
+    }
+    .stFormSubmitButton button:hover {
+        background-color: #5DAE61 !important; /* Match regular buttons */
     }
     </style>
     """,
