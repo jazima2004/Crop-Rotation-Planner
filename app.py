@@ -74,7 +74,7 @@ st.markdown(
     /* Text input text (light green background) */
     .stTextInput input {
         color: #000000 !important; /* Black text for readability */
-        background-color: #90EE90 !important; /* Light green background */
+        background-color: #FFFFFF !important; /* Light green background */
         border: 1px solid #4CAF50 !important;
         border-radius: 5px;
         padding: 5px;
@@ -119,7 +119,7 @@ st.markdown(
     }
     /* Text area text (retained from previous fix) */
     .stTextArea textarea {
-        color: #FFFFFF !important; /* White text for text area input */
+        color: #000000!important; /* White text for text area input */
         background-color: rgba(255, 255, 255, 0.1) !important; /* Semi-transparent white background */
         border: 1px solid #4CAF50 !important;
         border-radius: 5px;
