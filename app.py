@@ -6,6 +6,7 @@ from datetime import datetime
 import folium
 from streamlit_folium import st_folium
 from dotenv import load_dotenv
+import uuid
 
 # Load environment variables
 load_dotenv()
@@ -21,7 +22,7 @@ if not os.path.exists(HISTORY_CSV):
 if not os.path.exists(FEEDBACK_CSV):
     pd.DataFrame(columns=["crop", "suggestion", "rating", "notes"]).to_csv(FEEDBACK_CSV, index=False)
 
-# Farming-themed CSS with updated dropdown text color to black and text input background to light green
+# Farming-themed CSS
 st.markdown(
     """
     <style>
@@ -31,21 +32,18 @@ st.markdown(
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        background-color: #4CAF50 !important; /* Fallback color */
-        overflow-y: auto !important; /* Ensure scrolling is enabled */
-        min-height: 100vh; /* Ensure it takes at least full viewport height */
+        background-color: #4CAF50 !important;
+        overflow-y: auto !important;
+        min-height: 100vh;
     }
-    /* Fallback: Set all text in stApp to white, except specific elements */
     .stApp * {
         color: #FFFFFF !important;
     }
-    /* Override for sidebar to keep its text readable (not white) */
     .stSidebar, .stSidebar * {
-        color: #000000 !important; /* Black text for sidebar */
+        color: #000000 !important;
     }
-    /* Override for buttons to have black text */
     .stButton>button {
-        background-color: #66BB6A; /* Lighter green for contrast with black text */
+        background-color: #66BB6A;
         color: #000000 !important;
         border-radius: 5px;
         border: none;
@@ -55,37 +53,32 @@ st.markdown(
         font-weight: bold;
     }
     .stButton>button:hover {
-        background-color: #5DAE61; /* Slightly darker on hover */
+        background-color: #5DAE61;
     }
     .stSidebar {
         background-color: rgba(255, 255, 255, 0.9);
         border-right: 2px solid #4CAF50;
     }
-    /* Titles and headers */
     h1, h2, .stMarkdown h1, .stMarkdown h2, .stMarkdown h1 *, .stMarkdown h2 * {
         color: #FFFFFF !important;
         text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     }
-    /* Subtext and general text (e.g., st.write) */
     .stMarkdown p, .stMarkdown div, .stMarkdown p *, .stMarkdown div * {
         color: #FFFFFF !important;
     }
-    /* Input labels */
     .stSelectbox label, .stTextInput label, .stTextArea label, .stRadio label,
     .stSelectbox label *, .stTextInput label *, .stTextArea label *, .stRadio label * {
         color: #FFFFFF !important;
     }
-    /* Text input background to light green */
     .stTextInput input {
         color: #000000 !important;
-        background-color: #E8F5E9 !important; /* Light green background */
+        background-color: #E8F5E9 !important;
         border: 1px solid #4CAF50 !important;
         border-radius: 5px;
         padding: 5px;
     }
-    /* Dropdown (selectbox) text (selected option and options in menu) */
     .stSelectbox div[data-baseweb="select"] > div, .stSelectbox div[data-baseweb="select"] > div * {
-        color: #000000 !important; /* Ensure selected text is black */
+        color: #000000 !important;
         background-color: #FFFFFF !important;
         border: 1px solid #4CAF50 !important;
         border-radius: 5px;
@@ -95,13 +88,12 @@ st.markdown(
         background-color: #FFFFFF !important;
     }
     .stSelectbox div[role="listbox"] li, .stSelectbox div[role="listbox"] li * {
-        color: #000000 !important; /* Ensure dropdown options are black */
+        color: #000000 !important;
         background-color: #FFFFFF !important;
     }
     .stSelectbox div[role="listbox"] li:hover {
-        background-color: #E8F5E9 !important; /* Light green on hover for options */
+        background-color: #E8F5E9 !important;
     }
-    /* Messages (success, info, warning, error) */
     .stSuccess, .stInfo, .stWarning, .stError,
     .stSuccess *, .stInfo *, .stWarning *, .stError * {
         color: #FFFFFF !important;
@@ -109,24 +101,23 @@ st.markdown(
         border-radius: 5px;
         padding: 10px;
     }
-    /* Form submit button text (set to black) */
     .stFormSubmitButton button {
         color: #000000 !important;
-        background-color: #66BB6A !important; /* Match regular buttons */
+        background-color: #66BB6A !important;
         border-radius: 5px;
         border: none;
         padding: 10px;
         font-weight: bold;
     }
     .stFormSubmitButton button:hover {
-        background-color: #5DAE61 !important; /* Match regular buttons */
+        background-color: #5DAE61 !important;
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Rotation rules with seasons
+# Rotation rules
 ROTATION_RULES = {
     "Wheat": {
         "humid": {
@@ -206,7 +197,7 @@ def get_climate(city="Delhi"):
         lon = data["coord"]["lon"]
         return "humid" if humidity > 50 else "dry", lat, lon, humidity, data["main"]["temp"]
     except:
-        return "humid", 28.6139, 77.2090, None, None  # Fallback to Delhi coordinates
+        return "humid", 28.6139, 77.2090, None, None
 
 def add_crop(crop, location, soil_type, season):
     date = datetime.now().strftime("%Y-%m-%d")
@@ -270,37 +261,37 @@ if "suggestions" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "Add Crop"
 
-# Sidebar buttons
+# Sidebar buttons with unique keys
 st.sidebar.title("🌾 Crop Rotation Planner")
-if st.sidebar.button("Add Crop"):
+if st.sidebar.button("Add Crop", key="sidebar_add_crop"):
     st.session_state.page = "Add Crop"
-if st.sidebar.button("Get Rotation Suggestions"):
+if st.sidebar.button("Get Rotation Suggestions", key="sidebar_get_suggestions"):
     st.session_state.page = "Get Rotation Suggestions"
-if st.sidebar.button("Submit Feedback"):
+if st.sidebar.button("Submit Feedback", key="sidebar_submit_feedback"):
     st.session_state.page = "Submit Feedback"
-if st.sidebar.button("Export Rotation Plan"):
+if st.sidebar.button("Export Rotation Plan", key="sidebar_export_plan"):
     st.session_state.page = "Export Rotation Plan"
-if st.sidebar.button("View Crop History"):
+if st.sidebar.button("View Crop History", key="sidebar_view_history"):
     st.session_state.page = "View Crop History"
-if st.sidebar.button("Reset Crop History"):
+if st.sidebar.button("Reset Crop History", key="sidebar_reset_history"):
     st.session_state.page = "Reset Crop History"
-if st.sidebar.button("Real-time Climate Info"):
+if st.sidebar.button("Real-time Climate Info", key="sidebar_climate_info"):
     st.session_state.page = "Real-time Climate Info"
-if st.sidebar.button("Location Map"):
+if st.sidebar.button("Location Map", key="sidebar_location_map"):
     st.session_state.page = "Location Map"
 
-# Main content based on selected page
+# Main content
 st.title("Farmer's Crop Rotation Planner")
 st.write("Plan sustainable crop rotations with real-time climate data!")
 
 # Shared inputs
 def render_inputs():
-    with st.form("crop_form"):
-        st.session_state.inputs["crop"] = st.selectbox("Current Crop", ["Wheat", "Rice", "Maize", "Legumes", "Millets"], key="crop")
-        st.session_state.inputs["location"] = st.text_input("Location", st.session_state.inputs["location"], key="location")
-        st.session_state.inputs["soil"] = st.selectbox("Soil Type", ["Sandy", "Clayey", "Loamy"], key="soil")
-        st.session_state.inputs["season"] = st.selectbox("Season", ["Monsoon", "Winter", "Summer"], key="season")
-        return st.form_submit_button("Submit")
+    with st.form("crop_form", clear_on_submit=False):
+        st.session_state.inputs["crop"] = st.selectbox("Current Crop", ["Wheat", "Rice", "Maize", "Legumes", "Millets"], key="crop_select")
+        st.session_state.inputs["location"] = st.text_input("Location", st.session_state.inputs["location"], key="location_input")
+        st.session_state.inputs["soil"] = st.selectbox("Soil Type", ["Sandy", "Clayey", "Loamy"], key="soil_select")
+        st.session_state.inputs["season"] = st.selectbox("Season", ["Monsoon", "Winter", "Summer"], key="season_select")
+        return st.form_submit_button("Submit", key="form_submit")
 
 # Page content
 if st.session_state.page == "Add Crop":
@@ -317,7 +308,7 @@ if st.session_state.page == "Add Crop":
 elif st.session_state.page == "Get Rotation Suggestions":
     st.header("Get Rotation Suggestions")
     render_inputs()
-    if st.button("Suggest Rotation"):
+    if st.button("Suggest Rotation", key="suggest_rotation"):
         st.session_state.suggestions = suggest_rotation(
             st.session_state.inputs["crop"],
             st.session_state.inputs["location"],
@@ -347,14 +338,14 @@ elif st.session_state.page == "Get Rotation Suggestions":
                     st.session_state.map_data["suggestions"]
                 )
                 if map_obj:
-                    st_folium(map_obj, width=700, height=400, key="map", returned_objects=[])
+                    st_folium(map_obj, width=700, height=400, key="suggestions_map", returned_objects=[])
 
 elif st.session_state.page == "Submit Feedback":
     st.header("Submit Feedback")
     if st.session_state.suggestions and isinstance(st.session_state.suggestions, list):
-        feedback = st.radio("Was the suggestion useful?", ["Yes", "No"])
-        feedback_notes = st.text_area("Feedback Notes", placeholder="e.g., Legumes worked well")
-        if st.button("Submit Feedback"):
+        feedback = st.radio("Was the suggestion useful?", ["Yes", "No"], key="feedback_radio")
+        feedback_notes = st.text_area("Feedback Notes", placeholder="e.g., Legumes worked well", key="feedback_notes")
+        if st.button("Submit Feedback", key="submit_feedback_button"):
             rating = 1 if feedback == "Yes" else 0
             add_feedback(st.session_state.inputs["crop"], st.session_state.suggestions[0], rating, feedback_notes)
             st.info(f"Feedback recorded: {st.session_state.suggestions[0]} rated as {feedback}")
@@ -363,7 +354,7 @@ elif st.session_state.page == "Submit Feedback":
 
 elif st.session_state.page == "Export Rotation Plan":
     st.header("Export Rotation Plan")
-    if st.button("Export Plan"):
+    if st.button("Export Plan", key="export_plan"):
         if st.session_state.suggestions and isinstance(st.session_state.suggestions, list):
             plan = pd.DataFrame({
                 "Current Crop": [st.session_state.inputs["crop"]],
@@ -372,7 +363,7 @@ elif st.session_state.page == "Export Rotation Plan":
             })
             plan.to_csv("rotation_plan.csv", index=False)
             with open("rotation_plan.csv", "rb") as file:
-                st.download_button("Download Plan", file, "rotation_plan.csv")
+                st.download_button("Download Plan", file, "rotation_plan.csv", key="download_plan")
             st.success("Rotation plan exported!")
         else:
             st.warning("No suggestions to export. Please get rotation suggestions first.")
@@ -398,18 +389,18 @@ elif st.session_state.page == "View Crop History":
             st.session_state.map_data["suggestions"]
         )
         if map_obj:
-            st_folium(map_obj, width=700, height=400, key="map", returned_objects=[])
+            st_folium(map_obj, width=700, height=400, key="history_map", returned_objects=[])
 
 elif st.session_state.page == "Reset Crop History":
     st.header("Reset Crop History")
-    if st.button("Reset History"):
+    if st.button("Reset History", key="reset_history"):
         pd.DataFrame(columns=["date", "crop", "location", "soil_type", "season"]).to_csv(HISTORY_CSV, index=False)
         st.success("Crop history reset.")
 
 elif st.session_state.page == "Real-time Climate Info":
     st.header("Real-time Climate Info")
-    city = st.text_input("Enter your city for live climate data", value=st.session_state.inputs["location"])
-    if st.button("Check Climate"):
+    city = st.text_input("Enter your city for live climate data", value=st.session_state.inputs["location"], key="climate_city")
+    if st.button("Check Climate", key="check_climate"):
         climate, lat, lon, humidity, temp = get_climate(city)
         st.session_state.map_data = {
             "city": city,
@@ -428,13 +419,13 @@ elif st.session_state.page == "Real-time Climate Info":
     if st.session_state.map_data["lat"] and st.session_state.map_data["lon"]:
         map_obj = create_map(
             st.session_state.map_data["city"],
-            st.session_state.map_data["climate"],
+            st.session stamped_data["climate"],
             st.session_state.map_data["lat"],
             st.session_state.map_data["lon"],
             st.session_state.map_data["suggestions"]
         )
         if map_obj:
-            st_folium(map_obj, width=700, height=400, key="map", returned_objects=[])
+            st_folium(map_obj, width=700, height=400, key="climate_map", returned_objects=[])
 
 elif st.session_state.page == "Location Map":
     st.header("Location Map")
@@ -447,6 +438,6 @@ elif st.session_state.page == "Location Map":
             st.session_state.map_data["suggestions"]
         )
         if map_obj:
-            st_folium(map_obj, width=700, height=400, key="map", returned_objects=[])
+            st_folium(map_obj, width=700, height=400, key="location_map", returned_objects=[])
     else:
         st.warning("No location data available. Please check climate or get suggestions first.")
