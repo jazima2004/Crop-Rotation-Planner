@@ -294,7 +294,7 @@ def render_inputs():
         st.session_state.inputs["location"] = st.text_input("Location", st.session_state.inputs["location"], key="location_input")
         st.session_state.inputs["soil"] = st.selectbox("Soil Type", ["Sandy", "Clayey", "Loamy"], key="soil_select")
         st.session_state.inputs["season"] = st.selectbox("Season", ["Monsoon", "Winter", "Summer"], key="season_select")
-        submitted = st.form_submit_button("Submit", key="form_submit")
+        submitted = st.form_submit_button("Submit")
     return submitted
 
 # Page content
