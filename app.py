@@ -89,7 +89,7 @@ st.markdown(
         border: 2px solid #4CAF50 !important; /* Thicker border for visibility */
         border-radius: 5px;
         padding: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important; /* Shadow for lifted effect */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) ; /* Shadow for lifted effect */
         transition: background-color 0.2s ease; /* Smooth transition for hover */
     }
     /* Hover effect for dropdown */
