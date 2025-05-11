@@ -21,7 +21,7 @@ if not os.path.exists(HISTORY_CSV):
 if not os.path.exists(FEEDBACK_CSV):
     pd.DataFrame(columns=["crop", "suggestion", "rating", "notes"]).to_csv(FEEDBACK_CSV, index=False)
 
-# Farming-themed CSS with white text, black input/button text, and fixed scrolling
+# Farming-themed CSS with updated styling for dropdowns and text area
 st.markdown(
     """
     <style>
@@ -85,15 +85,32 @@ st.markdown(
     }
     /* Dropdown (selectbox) text (selected option and options in menu) */
     .stSelectbox select {
-        color: #000000 !important;
-        background-color: #FFFFFF !important;
+        color: #000000 !important; /* Black text for selected option */
+        background-color: #FFFFFF !important; /* White background for dropdown */
         border: 1px solid #4CAF50 !important;
         border-radius: 5px;
         padding: 5px;
     }
     .stSelectbox select option {
-        color: #000000 !important;
-        background-color: #FFFFFF !important;
+        color: #000000 !important; /* Black text for dropdown options */
+        background-color: #FFFFFF !important; /* White background for options */
+    }
+    /* Ensure selected option in dropdown remains visible */
+    .stSelectbox select option:checked {
+        color: #000000 !important; /* Black text for selected option */
+        background-color: #E0E0E0 !important; /* Light gray background for selected option */
+    }
+    /* Text area text (set to white for visibility) */
+    .stTextArea textarea {
+        color: #FFFFFF !important; /* White text for text area input */
+        background-color: rgba(255, 255, 255, 0.1) !important; /* Semi-transparent white background */
+        border: 1px solid #4CAF50 !important;
+        border-radius: 5px;
+        padding: 5px;
+    }
+    /* Placeholder text in text area */
+    .stTextArea textarea::placeholder {
+        color: #BBBBBB !important; /* Light gray placeholder text */
     }
     /* Messages (success, info, warning, error) */
     .stSuccess, .stInfo, .stWarning, .stError,
