@@ -21,7 +21,7 @@ if not os.path.exists(HISTORY_CSV):
 if not os.path.exists(FEEDBACK_CSV):
     pd.DataFrame(columns=["crop", "suggestion", "rating", "notes"]).to_csv(FEEDBACK_CSV, index=False)
 
-# Farming-themed CSS with updated styling for dropdowns and text area
+# Farming-themed CSS with updated styling for text fields and dropdowns
 st.markdown(
     """
     <style>
@@ -75,32 +75,32 @@ st.markdown(
     .stSelectbox label *, .stTextInput label *, .stTextArea label *, .stRadio label * {
         color: #FFFFFF !important;
     }
-    /* Text input text (already black) */
+    /* Text input text (set background to light green) */
     .stTextInput input {
-        color: #000000 !important;
-        background-color: #FFFFFF !important;
+        color: #000000 !important; /* Black text for readability */
+        background-color: #90EE90 !important; /* Light green background */
         border: 1px solid #4CAF50 !important;
         border-radius: 5px;
         padding: 5px;
     }
-    /* Dropdown (selectbox) text (selected option and options in menu) */
+    /* Dropdown (selectbox) text (set background to light green) */
     .stSelectbox select {
         color: #000000 !important; /* Black text for selected option */
-        background-color: #FFFFFF !important; /* White background for dropdown */
+        background-color: #90EE90 !important; /* Light green background */
         border: 1px solid #4CAF50 !important;
         border-radius: 5px;
         padding: 5px;
     }
     .stSelectbox select option {
         color: #000000 !important; /* Black text for dropdown options */
-        background-color: #FFFFFF !important; /* White background for options */
+        background-color: #90EE90 !important; /* Light green background for options */
     }
     /* Ensure selected option in dropdown remains visible */
     .stSelectbox select option:checked {
         color: #000000 !important; /* Black text for selected option */
-        background-color: #E0E0E0 !important; /* Light gray background for selected option */
+        background-color: #80DE80 !important; /* Slightly darker light green for selected option */
     }
-    /* Text area text (set to white for visibility) */
+    /* Text area text (retained from previous fix) */
     .stTextArea textarea {
         color: #FFFFFF !important; /* White text for text area input */
         background-color: rgba(255, 255, 255, 0.1) !important; /* Semi-transparent white background */
