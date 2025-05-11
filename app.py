@@ -419,7 +419,7 @@ elif st.session_state.page == "Real-time Climate Info":
     if st.session_state.map_data["lat"] and st.session_state.map_data["lon"]:
         map_obj = create_map(
             st.session_state.map_data["city"],
-            st.session stamped_data["climate"],
+            st.session_state.map_data["climate"],
             st.session_state.map_data["lat"],
             st.session_state.map_data["lon"],
             st.session_state.map_data["suggestions"]
