@@ -264,23 +264,23 @@ if "suggestions" not in st.session_state:
 if "page" not in st.session_state:
     st.session_state.page = "Add Crop"
 
-# Sidebar buttons
+# Sidebar buttons with unique keys
 st.sidebar.title("🌾 Crop Rotation Planner")
-if st.sidebar.button("Add Crop"):
+if st.sidebar.button("Add Crop", key="sidebar_add_crop"):
     st.session_state.page = "Add Crop"
-if st.sidebar.button("Get Rotation Suggestions"):
+if st.sidebar.button("Get Rotation Suggestions", key="sidebar_get_suggestions"):
     st.session_state.page = "Get Rotation Suggestions"
-if st.sidebar.button("Submit Feedback"):
+if st.sidebar.button("Submit Feedback", key="sidebar_submit_feedback"):
     st.session_state.page = "Submit Feedback"
-if st.sidebar.button("Export Rotation Plan"):
+if st.sidebar.button("Export Rotation Plan", key="sidebar_export_plan"):
     st.session_state.page = "Export Rotation Plan"
-if st.sidebar.button("View Crop History"):
+if st.sidebar.button("View Crop History", key="sidebar_view_history"):
     st.session_state.page = "View Crop History"
-if st.sidebar.button("Reset Crop History"):
+if st.sidebar.button("Reset Crop History", key="sidebar_reset_history"):
     st.session_state.page = "Reset Crop History"
-if st.sidebar.button("Real-time Climate Info"):
+if st.sidebar.button("Real-time Climate Info", key="sidebar_climate_info"):
     st.session_state.page = "Real-time Climate Info"
-if st.sidebar.button("Location Map"):
+if st.sidebar.button("Location Map", key="sidebar_location_map"):
     st.session_state.page = "Location Map"
 
 # Main content based on selected page
@@ -294,7 +294,7 @@ def render_inputs():
         st.session_state.inputs["location"] = st.text_input("Location", st.session_state.inputs["location"], key="location")
         st.session_state.inputs["soil"] = st.selectbox("Soil Type", ["Sandy", "Clayey", "Loamy"], key="soil")
         st.session_state.inputs["season"] = st.selectbox("Season", ["Monsoon", "Winter", "Summer"], key="season")
-        return st.form_submit_button("Submit")
+        return st.form_submit_button("Submit", key="form_submit")
 
 # Page content
 if st.session_state.page == "Add Crop":
@@ -311,7 +311,7 @@ if st.session_state.page == "Add Crop":
 elif st.session_state.page == "Get Rotation Suggestions":
     st.header("Get Rotation Suggestions")
     render_inputs()
-    if st.button("Suggest Rotation"):
+    if st.button("Suggest Rotation", key="suggest_rotation"):
         st.session_state.suggestions = suggest_rotation(
             st.session_state.inputs["crop"],
             st.session_state.inputs["location"],
@@ -341,14 +341,14 @@ elif st.session_state.page == "Get Rotation Suggestions":
                     st.session_state.map_data["suggestions"]
                 )
                 if map_obj:
-                    st_folium(map_obj, width=700, height=400, key="map", returned_objects=[])
+                    st_folium(map_obj, width=700, height=400, key="suggestions_map", returned_objects=[])
 
 elif st.session_state.page == "Submit Feedback":
     st.header("Submit Feedback")
     if st.session_state.suggestions and isinstance(st.session_state.suggestions, list):
-        feedback = st.radio("Was the suggestion useful?", ["Yes", "No"])
-        feedback_notes = st.text_area("Feedback Notes", placeholder="e.g., Legumes worked well")
-        if st.button("Submit Feedback"):
+        feedback = st.radio("Was the suggestion useful?", ["Yes", "No"], key="feedback_radio")
+        feedback_notes = st.text_area("Feedback Notes", placeholder="e.g., Legumes worked well", key="feedback_notes")
+        if st.button("Submit Feedback", key="submit_feedback"):
             rating = 1 if feedback == "Yes" else 0
             add_feedback(st.session_state.inputs["crop"], st.session_state.suggestions[0], rating, feedback_notes)
             st.info(f"Feedback recorded: {st.session_state.suggestions[0]} rated as {feedback}")
@@ -357,7 +357,7 @@ elif st.session_state.page == "Submit Feedback":
 
 elif st.session_state.page == "Export Rotation Plan":
     st.header("Export Rotation Plan")
-    if st.button("Export Plan"):
+    if st.button("Export Plan", key="export_plan"):
         if st.session_state.suggestions and isinstance(st.session_state.suggestions, list):
             plan = pd.DataFrame({
                 "Current Crop": [st.session_state.inputs["crop"]],
@@ -366,7 +366,7 @@ elif st.session_state.page == "Export Rotation Plan":
             })
             plan.to_csv("rotation_plan.csv", index=False)
             with open("rotation_plan.csv", "rb") as file:
-                st.download_button("Download Plan", file, "rotation_plan.csv")
+                st.download_button("Download Plan", file, "rotation_plan.csv", key="download_plan")
             st.success("Rotation plan exported!")
         else:
             st.warning("No suggestions to export. Please get rotation suggestions first.")
@@ -392,18 +392,18 @@ elif st.session_state.page == "View Crop History":
             st.session_state.map_data["suggestions"]
         )
         if map_obj:
-            st_folium(map_obj, width=700, height=400, key="map", returned_objects=[])
+            st_folium(map_obj, width=700, height=400, key="history_map", returned_objects=[])
 
 elif st.session_state.page == "Reset Crop History":
     st.header("Reset Crop History")
-    if st.button("Reset History"):
+    if st.button("Reset History", key="reset_history"):
         pd.DataFrame(columns=["date", "crop", "location", "soil_type", "season"]).to_csv(HISTORY_CSV, index=False)
         st.success("Crop history reset.")
 
 elif st.session_state.page == "Real-time Climate Info":
     st.header("Real-time Climate Info")
-    city = st.text_input("Enter your city for live climate data", value=st.session_state.inputs["location"])
-    if st.button("Check Climate"):
+    city = st.text_input("Enter your city for live climate data", value=st.session_state.inputs["location"], key="climate_city")
+    if st.button("Check Climate", key="check_climate"):
         climate, lat, lon, humidity, temp = get_climate(city)
         st.session_state.map_data = {
             "city": city,
@@ -428,7 +428,7 @@ elif st.session_state.page == "Real-time Climate Info":
             st.session_state.map_data["suggestions"]
         )
         if map_obj:
-            st_folium(map_obj, width=700, height=400, key="map", returned_objects=[])
+            st_folium(map_obj, width=700, height=400, key="climate_map", returned_objects=[])
 
 elif st.session_state.page == "Location Map":
     st.header("Location Map")
@@ -441,6 +441,6 @@ elif st.session_state.page == "Location Map":
             st.session_state.map_data["suggestions"]
         )
         if map_obj:
-            st_folium(map_obj, width=700, height=400, key="map", returned_objects=[])
+            st_folium(map_obj, width=700, height=400, key="location_map", returned_objects=[])
     else:
         st.warning("No location data available. Please check climate or get suggestions first.")
