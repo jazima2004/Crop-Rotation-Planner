@@ -21,7 +21,7 @@ if not os.path.exists(HISTORY_CSV):
 if not os.path.exists(FEEDBACK_CSV):
     pd.DataFrame(columns=["crop", "suggestion", "rating", "notes"]).to_csv(FEEDBACK_CSV, index=False)
 
-# Farming-themed CSS with updated styling for text fields and dropdowns
+# Farming-themed CSS with updated styling for dropdown visibility
 st.markdown(
     """
     <style>
@@ -75,7 +75,7 @@ st.markdown(
     .stSelectbox label *, .stTextInput label *, .stTextArea label *, .stRadio label * {
         color: #FFFFFF !important;
     }
-    /* Text input text (set background to light green) */
+    /* Text input text (light green background) */
     .stTextInput input {
         color: #000000 !important; /* Black text for readability */
         background-color: #90EE90 !important; /* Light green background */
@@ -83,22 +83,43 @@ st.markdown(
         border-radius: 5px;
         padding: 5px;
     }
-    /* Dropdown (selectbox) text (set background to light green) */
+    /* Dropdown (selectbox) styling for better visibility */
     .stSelectbox select {
         color: #000000 !important; /* Black text for selected option */
         background-color: #90EE90 !important; /* Light green background */
-        border: 1px solid #4CAF50 !important;
+        border: 2px solid #4CAF50 !important; /* Thicker border for visibility */
         border-radius: 5px;
         padding: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important; /* Shadow for lifted effect */
+        transition: background-color 0.2s ease; /* Smooth transition for hover */
     }
+    /* Hover effect for dropdown */
+    .stSelectbox select:hover {
+        background-color: #80DE80 !important; /* Slightly darker light green on hover */
+    }
+    /* Style the expanded options list container */
+    .stSelectbox div[role="listbox"] {
+        background-color: #90EE90 !important; /* Light green background for the options list */
+        border: 1px solid #4CAF50 !important;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important; /* Shadow for the dropdown list */
+        z-index: 1000 !important; /* Ensure the options list is above other elements */
+    }
+    /* Style for individual options */
     .stSelectbox select option {
         color: #000000 !important; /* Black text for dropdown options */
         background-color: #90EE90 !important; /* Light green background for options */
+        padding: 5px;
     }
-    /* Ensure selected option in dropdown remains visible */
+    /* Hover effect for options */
+    .stSelectbox select option:hover {
+        background-color: #80DE80 !important; /* Slightly darker light green on hover */
+    }
+    /* Selected option styling */
     .stSelectbox select option:checked {
         color: #000000 !important; /* Black text for selected option */
-        background-color: #80DE80 !important; /* Slightly darker light green for selected option */
+        background-color: #70CE70 !important; /* Darker light green for selected option */
+        font-weight: bold; /* Bold text for selected option */
     }
     /* Text area text (retained from previous fix) */
     .stTextArea textarea {
