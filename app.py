@@ -289,12 +289,13 @@ st.write("Plan sustainable crop rotations with real-time climate data!")
 
 # Shared inputs
 def render_inputs():
-    with st.form("crop_form"):
-        st.session_state.inputs["crop"] = st.selectbox("Current Crop", ["Wheat", "Rice", "Maize", "Legumes", "Millets"], key="crop")
-        st.session_state.inputs["location"] = st.text_input("Location", st.session_state.inputs["location"], key="location")
-        st.session_state.inputs["soil"] = st.selectbox("Soil Type", ["Sandy", "Clayey", "Loamy"], key="soil")
-        st.session_state.inputs["season"] = st.selectbox("Season", ["Monsoon", "Winter", "Summer"], key="season")
-        return st.form_submit_button("Submit", key="form_submit")
+    with st.form("crop_form", clear_on_submit=False):
+        st.session_state.inputs["crop"] = st.selectbox("Current Crop", ["Wheat", "Rice", "Maize", "Legumes", "Millets"], key="crop_select")
+        st.session_state.inputs["location"] = st.text_input("Location", st.session_state.inputs["location"], key="location_input")
+        st.session_state.inputs["soil"] = st.selectbox("Soil Type", ["Sandy", "Clayey", "Loamy"], key="soil_select")
+        st.session_state.inputs["season"] = st.selectbox("Season", ["Monsoon", "Winter", "Summer"], key="season_select")
+        submitted = st.form_submit_button("Submit", key="form_submit")
+    return submitted
 
 # Page content
 if st.session_state.page == "Add Crop":
@@ -310,8 +311,7 @@ if st.session_state.page == "Add Crop":
 
 elif st.session_state.page == "Get Rotation Suggestions":
     st.header("Get Rotation Suggestions")
-    render_inputs()
-    if st.button("Suggest Rotation", key="suggest_rotation"):
+    if render_inputs():
         st.session_state.suggestions = suggest_rotation(
             st.session_state.inputs["crop"],
             st.session_state.inputs["location"],
