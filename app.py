@@ -291,7 +291,8 @@ def render_inputs():
         st.session_state.inputs["location"] = st.text_input("Location", st.session_state.inputs["location"], key="location_input")
         st.session_state.inputs["soil"] = st.selectbox("Soil Type", ["Sandy", "Clayey", "Loamy"], key="soil_select")
         st.session_state.inputs["season"] = st.selectbox("Season", ["Monsoon", "Winter", "Summer"], key="season_select")
-        return st.form_submit_button("Submit", key="form_submit")
+        submitted = st.form_submit_button("Submit", key="form_submit")
+    return submitted
 
 # Page content
 if st.session_state.page == "Add Crop":
@@ -307,8 +308,7 @@ if st.session_state.page == "Add Crop":
 
 elif st.session_state.page == "Get Rotation Suggestions":
     st.header("Get Rotation Suggestions")
-    render_inputs()
-    if st.button("Suggest Rotation", key="suggest_rotation"):
+    if render_inputs():
         st.session_state.suggestions = suggest_rotation(
             st.session_state.inputs["crop"],
             st.session_state.inputs["location"],
