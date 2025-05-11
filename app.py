@@ -84,7 +84,7 @@ st.markdown(
     }
     /* Dropdown (selectbox) styling for better visibility */
     .stSelectbox select {
-        color: #000000 !important; /* Black text for selected option */
+        color: #000000 ; /* Black text for selected option */
         background-color: #90EE90 !important; /* Light green background */
         border: 2px solid #4CAF50 !important; /* Thicker border for visibility */
         border-radius: 5px;
