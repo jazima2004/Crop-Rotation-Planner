@@ -34,10 +34,7 @@ st.markdown(
         overflow-y: auto !important; /* Ensure scrolling is enabled */
         min-height: 100vh; /* Ensure it takes at least full viewport height */
     }
-    /* Fallback: Set all text in stApp to white, except specific elements */
-    .stApp * {
-        color: #FFFFFF !important;
-    }
+    
     /* Override for sidebar to keep its text readable (not white) */
     .stSidebar, .stSidebar * {
         color: #000000 !important; /* Black text for sidebar */
