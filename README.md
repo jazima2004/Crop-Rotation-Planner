@@ -7,7 +7,7 @@ Here’s the summary with subheadings for better clarity:
 
 ### **Farmer's Crop Rotation Planner**
 
-**About**
+###**About**
 This web application assists farmers in planning sustainable crop rotations by leveraging real-time weather data and predefined crop rotation rules. It helps optimize crop productivity while promoting soil health by suggesting suitable crops based on current conditions.
 
 ---
